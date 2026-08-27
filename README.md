@@ -1,32 +1,30 @@
-# React + TypeScript + Vite
+# Scoped AI Template Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A browser-based Website Builder prototype that allows safe, scoped, deterministic AI edits. 
+Built as part of an exercise to demonstrate state management, scope isolation (viewports), and revision history in a visual editor context.
 
-Currently, two official plugins are available:
+## Setup & Run
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. `npm install`
+2. `npm run dev`
 
-## React Compiler
+## Chosen Template
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The template used is an original, simple responsive "Acme Corp" landing page created specifically for this assignment. It features a Header, Hero Section, Features grid, and a Footer. It is stored inside `src/store/defaultTemplate.ts`.
 
-## Expanding the Oxlint configuration
+## Architecture & Requirement Mapping
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+- **Framework**: React + TypeScript (Vite)
+- **State Management**: Zustand
+- **Styling**: Vanilla CSS / CSS Modules
+- **Canonical Model**: JSON-serializable `TemplateData` in Zustand.
+- **Viewport Isolation**: `TemplateElement` renders using `getResolvedStyle` which merges `base` with `overrides[activeViewport]`.
+- **Canvas/Code Consistency**: Both the property inspector and code editor fire the same `updateElement` action which patches the central Zustand store.
+- **AI Demo Engine**: A simple deterministic matcher in `AiDemoForm.tsx`.
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+## Demo Examples
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Select an element (e.g. `hero-title` or `hero-cta`), and enter one of these exact phrases into the AI Demo input:
+1. `Make it pop` -> Modifies styling to pink & bold for the selected element in the active viewport.
+2. `Rewrite header` -> Rewrites content to "✨ Magic AI Content ✨".
+3. `Fail` -> Safe failure example showing unsupported instructions.
