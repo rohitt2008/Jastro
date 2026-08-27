@@ -2,6 +2,7 @@ import React from 'react';
 import { useStore } from '../store/useStore';
 import { PropertyInspector } from './PropertyInspector';
 import { CodeEditor } from './CodeEditor';
+import { AiDemoForm } from './AiDemoForm';
 
 export const Sidebar = () => {
   const { selection, template } = useStore();
@@ -37,20 +38,7 @@ export const Sidebar = () => {
 
             <CodeEditor />
             
-            {/* AI Demo form will go here */}
-            <div className="border-t border-gray-100 pt-4">
-              <h3 className="text-sm font-medium text-purple-700 mb-2 flex items-center gap-2">
-                ✨ AI Demo Edit
-              </h3>
-              <textarea 
-                className="w-full text-sm border rounded-md p-2 mt-2 focus:ring-purple-500 focus:border-purple-500"
-                rows={3}
-                placeholder="e.g., 'Make it pop', 'Rewrite header'"
-              />
-              <button className="w-full mt-2 bg-purple-600 text-white py-1.5 rounded-md text-sm font-medium hover:bg-purple-700 transition-colors">
-                Generate Proposal
-              </button>
-            </div>
+            <AiDemoForm />
           </div>
         )}
       </div>
