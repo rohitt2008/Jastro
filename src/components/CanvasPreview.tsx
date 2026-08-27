@@ -1,21 +1,29 @@
 import React from 'react';
 import { useStore } from '../store/useStore';
 import clsx from 'clsx';
+import { TemplateElement } from './TemplateElement';
 
 export const CanvasPreview = () => {
-  const { activeViewport } = useStore();
+  const { activeViewport, template, clearSelection } = useStore();
 
   const getViewportWidth = () => {
     switch (activeViewport) {
-      case 'desktop': return '100%'; // Will scale to max available
+      case 'desktop': return '100%';
       case 'tablet': return '768px';
       case 'mobile': return '375px';
       default: return '100%';
     }
   };
 
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    // If the click reaches the canvas background, clear selection
+    if (e.target === e.currentTarget) {
+      clearSelection();
+    }
+  };
+
   return (
-    <div className="flex-1 bg-gray-100 overflow-auto flex justify-center py-8">
+    <div className="flex-1 bg-gray-100 overflow-auto flex justify-center py-8" onClick={handleCanvasClick}>
       <div 
         className={clsx(
           "bg-white shadow-xl transition-all duration-300 ease-in-out origin-top",
@@ -23,9 +31,7 @@ export const CanvasPreview = () => {
         )}
         style={{ width: activeViewport !== 'desktop' ? getViewportWidth() : undefined, minHeight: '800px' }}
       >
-        <div className="w-full h-full p-8 flex items-center justify-center text-gray-400 border-2 border-dashed border-gray-200 m-8 w-auto">
-          Canvas Content will render here
-        </div>
+        <TemplateElement id={template.rootElementId} />
       </div>
     </div>
   );
