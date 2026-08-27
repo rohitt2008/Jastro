@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
-import { ElementState } from '../types';
 
 export const CodeEditor = () => {
   const { selection, template, updateElement } = useStore();

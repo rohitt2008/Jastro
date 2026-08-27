@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
-import { StoreState, ElementState, Viewport, RevisionType } from '../types';
+import type { StoreState, ElementState, Viewport, RevisionType } from '../types';
 import { defaultTemplate } from './defaultTemplate';
 
-export const useStore = create<StoreState>((set, get) => ({
+export const useStore = create<StoreState>((set) => ({
   template: defaultTemplate,
   history: [],
   selection: [],

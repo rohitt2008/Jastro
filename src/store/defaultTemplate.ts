@@ -1,4 +1,4 @@
-import { TemplateData } from '../types';
+import type { TemplateData } from '../types';
 
 export const defaultTemplate: TemplateData = {
   id: 'tpl-1',

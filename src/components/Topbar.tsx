@@ -1,8 +1,7 @@
-import React from 'react';
 import { useStore } from '../store/useStore';
 import { Monitor, Tablet, Smartphone, Undo, Redo, Play } from 'lucide-react';
 import clsx from 'clsx';
-import { Viewport } from '../types';
+import type { Viewport } from '../types';
 
 export const Topbar = () => {
   const { activeViewport, setActiveViewport, activeScope, setActiveScope } = useStore();

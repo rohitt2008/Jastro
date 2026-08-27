@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
-import { ElementState } from '../types';
+import type { ElementState } from '../types';
 
 export const AiDemoForm = () => {
   const { selection, template, activeScope, setPendingProposals } = useStore();

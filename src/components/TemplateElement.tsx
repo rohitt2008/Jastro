@@ -1,7 +1,5 @@
-import React from 'react';
 import { useStore } from '../store/useStore';
 import { getResolvedStyle } from '../utils/styleUtils';
-import clsx from 'clsx';
 
 interface TemplateElementProps {
   id: string;

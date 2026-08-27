@@ -1,4 +1,4 @@
-import { ElementState, Viewport } from '../types';
+import type { ElementState, Viewport } from '../types';
 
 export const getResolvedStyle = (element: ElementState, activeViewport: Viewport) => {
   const baseStyle = element.base.style || {};
