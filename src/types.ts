@@ -70,6 +70,9 @@ export interface EditorActions {
   
   // History
   recoverElement: (id: string, revisionId: string) => void;
+  
+  // App
+  reset: () => void;
 }
 
 export type StoreState = EditorState & EditorActions;

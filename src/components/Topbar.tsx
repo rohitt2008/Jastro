@@ -1,10 +1,10 @@
 import { useStore } from '../store/useStore';
-import { Monitor, Tablet, Smartphone, Undo, Redo, Play } from 'lucide-react';
+import { Monitor, Tablet, Smartphone, Undo, Redo, Play, Trash2 } from 'lucide-react';
 import clsx from 'clsx';
 import type { Viewport } from '../types';
 
 export const Topbar = () => {
-  const { activeViewport, setActiveViewport, activeScope, setActiveScope } = useStore();
+  const { activeViewport, setActiveViewport, activeScope, setActiveScope, reset } = useStore();
 
   const handleViewportChange = (viewport: Viewport) => {
     setActiveViewport(viewport);
@@ -58,8 +58,16 @@ export const Topbar = () => {
         <button className="p-2 text-gray-500 hover:text-gray-700 disabled:opacity-50" disabled>
           <Undo size={18} />
         </button>
-        <button className="p-2 text-gray-500 hover:text-gray-700 disabled:opacity-50" disabled>
-          <Redo size={18} />
+        <button 
+          onClick={() => {
+            if (window.confirm("Are you sure you want to reset the template to its initial state? This will clear all history and persistence.")) {
+              reset();
+            }
+          }}
+          className="p-2 text-red-500 hover:text-red-700 bg-red-50 rounded" 
+          title="Reset Template"
+        >
+          <Trash2 size={18} />
         </button>
         <button className="flex items-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded text-sm font-medium hover:bg-blue-700 ml-2">
           <Play size={16} />

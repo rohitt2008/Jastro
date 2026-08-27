@@ -1,167 +1,168 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 import type { StoreState, ElementState, Viewport, RevisionType } from '../types';
 import { defaultTemplate } from './defaultTemplate';
 
-export const useStore = create<StoreState>((set) => ({
+const initialState = {
   template: defaultTemplate,
   history: [],
   selection: [],
-  activeViewport: 'desktop',
-  activeScope: 'desktop', // defaults to editing desktop
+  activeViewport: 'desktop' as Viewport,
+  activeScope: 'desktop' as Viewport,
   pendingAiProposals: {},
+};
 
-  selectElement: (id: string, additive = false) => {
-    set((state) => {
-      if (additive) {
-        if (state.selection.includes(id)) {
-          return { selection: state.selection.filter(s => s !== id) };
-        }
-        return { selection: [...state.selection, id] };
-      }
-      return { selection: [id] };
-    });
-  },
+export const useStore = create<StoreState>()(
+  persist(
+    (set) => ({
+      ...initialState,
 
-  clearSelection: () => set({ selection: [] }),
-
-  setActiveViewport: (viewport: Viewport) => set({ activeViewport: viewport }),
-  
-  setActiveScope: (scope: Viewport | 'all') => set({ activeScope: scope }),
-
-  updateElement: (id: string, updates: Partial<ElementState>, type: RevisionType) => {
-    set((state) => {
-      const currentElement = state.template.elements[id];
-      if (!currentElement) return state;
-
-      const newElement = { ...currentElement };
-      const scope = state.activeScope;
-      
-      // Update logic based on scope
-      if (updates.base) {
-        newElement.base = { ...newElement.base, ...updates.base };
-      }
-      
-      if (updates.overrides) {
-        if (scope === 'all') {
-          // 'all' scope means we are updating the base style/content, overrides should be cleared for those keys?
-          // Actually, as per requirements, "Base values apply across views. Desktop, tablet, or mobile overrides affect only that view."
-          // Usually 'all' updates base, and single view updates overrides.
-          // Let's refine this: if scope is 'all', apply to base.
-          // If scope is viewport, apply to overrides[viewport].
-        }
-      }
-
-      // Simple patch logic for now: assume updates are fully prepared correctly
-      // We will handle the exact deep merging logic inside the editor components before calling updateElement,
-      // or we can implement it here.
-      
-      const patchedElement = { ...currentElement, ...updates };
-
-      const newHistory = [
-        ...state.history,
-        {
-          id: uuidv4(),
-          timestamp: Date.now(),
-          elementId: id,
-          viewportScope: state.activeScope,
-          changes: updates,
-          previousState: currentElement,
-          type
-        }
-      ];
-
-      return {
-        template: {
-          ...state.template,
-          elements: {
-            ...state.template.elements,
-            [id]: patchedElement
+      selectElement: (id: string, additive = false) => {
+        set((state) => {
+          if (additive) {
+            if (state.selection.includes(id)) {
+              return { selection: state.selection.filter(s => s !== id) };
+            }
+            return { selection: [...state.selection, id] };
           }
-        },
-        history: newHistory
-      };
-    });
-  },
+          return { selection: [id] };
+        });
+      },
 
-  setPendingProposals: (proposals: Record<string, ElementState>) => set({ pendingAiProposals: proposals }),
+      clearSelection: () => set({ selection: [] }),
 
-  acceptProposal: (id: string) => {
-    set((state) => {
-      const proposal = state.pendingAiProposals[id];
-      if (!proposal) return state;
+      setActiveViewport: (viewport: Viewport) => set({ activeViewport: viewport }),
+      
+      setActiveScope: (scope: Viewport | 'all') => set({ activeScope: scope }),
 
-      // Create history entry
-      const newHistory = [
-        ...state.history,
-        {
-          id: uuidv4(),
-          timestamp: Date.now(),
-          elementId: id,
-          viewportScope: state.activeScope,
-          changes: proposal,
-          previousState: state.template.elements[id],
-          type: 'ai_accepted' as RevisionType
-        }
-      ];
+      updateElement: (id: string, updates: Partial<ElementState>, type: RevisionType) => {
+        set((state) => {
+          const currentElement = state.template.elements[id];
+          if (!currentElement) return state;
 
-      // Remove from pending
-      const newPending = { ...state.pendingAiProposals };
-      delete newPending[id];
-
-      return {
-        template: {
-          ...state.template,
-          elements: {
-            ...state.template.elements,
-            [id]: proposal
+          const newElement = { ...currentElement };
+          
+          if (updates.base) {
+            newElement.base = { ...newElement.base, ...updates.base };
           }
-        },
-        history: newHistory,
-        pendingAiProposals: newPending
-      };
-    });
-  },
+          
+          const patchedElement = { ...currentElement, ...updates };
 
-  rejectProposal: (id: string) => {
-    set((state) => {
-      const newPending = { ...state.pendingAiProposals };
-      delete newPending[id];
-      return { pendingAiProposals: newPending };
-    });
-  },
+          const newHistory = [
+            ...state.history,
+            {
+              id: uuidv4(),
+              timestamp: Date.now(),
+              elementId: id,
+              viewportScope: state.activeScope,
+              changes: updates,
+              previousState: currentElement,
+              type
+            }
+          ];
 
-  recoverElement: (id: string, revisionId: string) => {
-    set((state) => {
-      const revision = state.history.find(r => r.id === revisionId);
-      if (!revision || revision.elementId !== id) return state;
+          return {
+            template: {
+              ...state.template,
+              elements: {
+                ...state.template.elements,
+                [id]: patchedElement
+              }
+            },
+            history: newHistory
+          };
+        });
+      },
 
-      const currentElement = state.template.elements[id];
-      if (!currentElement) return state;
+      setPendingProposals: (proposals: Record<string, ElementState>) => set({ pendingAiProposals: proposals }),
 
-      const newHistory = [
-        ...state.history,
-        {
-          id: uuidv4(),
-          timestamp: Date.now(),
-          elementId: id,
-          viewportScope: revision.viewportScope,
-          changes: revision.previousState, // we are applying the previous state
-          previousState: currentElement,
-          type: 'recovery' as RevisionType
-        }
-      ];
+      acceptProposal: (id: string) => {
+        set((state) => {
+          const proposal = state.pendingAiProposals[id];
+          if (!proposal) return state;
 
-      return {
-        template: {
-          ...state.template,
-          elements: {
-            ...state.template.elements,
-            [id]: revision.previousState
-          }
-        },
-        history: newHistory
-      };
-    });
-  }
-}));
+          const newHistory = [
+            ...state.history,
+            {
+              id: uuidv4(),
+              timestamp: Date.now(),
+              elementId: id,
+              viewportScope: state.activeScope,
+              changes: proposal,
+              previousState: state.template.elements[id],
+              type: 'ai_accepted' as RevisionType
+            }
+          ];
+
+          const newPending = { ...state.pendingAiProposals };
+          delete newPending[id];
+
+          return {
+            template: {
+              ...state.template,
+              elements: {
+                ...state.template.elements,
+                [id]: proposal
+              }
+            },
+            history: newHistory,
+            pendingAiProposals: newPending
+          };
+        });
+      },
+
+      rejectProposal: (id: string) => {
+        set((state) => {
+          const newPending = { ...state.pendingAiProposals };
+          delete newPending[id];
+          return { pendingAiProposals: newPending };
+        });
+      },
+
+      recoverElement: (id: string, revisionId: string) => {
+        set((state) => {
+          const revision = state.history.find(r => r.id === revisionId);
+          if (!revision || revision.elementId !== id) return state;
+
+          const currentElement = state.template.elements[id];
+          if (!currentElement) return state;
+
+          const newHistory = [
+            ...state.history,
+            {
+              id: uuidv4(),
+              timestamp: Date.now(),
+              elementId: id,
+              viewportScope: revision.viewportScope,
+              changes: revision.previousState, 
+              previousState: currentElement,
+              type: 'recovery' as RevisionType
+            }
+          ];
+
+          return {
+            template: {
+              ...state.template,
+              elements: {
+                ...state.template.elements,
+                [id]: revision.previousState
+              }
+            },
+            history: newHistory
+          };
+        });
+      },
+
+      reset: () => set(initialState)
+    }),
+    {
+      name: 'jastro-editor-storage',
+      partialize: (state) => ({ 
+        template: state.template,
+        history: state.history,
+        // We do not persist selection or active viewport/pending states to ensure clean fresh loads
+      }),
+    }
+  )
+);

@@ -1,7 +1,7 @@
 # AI Usage
 
 ## Tools used
-- AI Model: Gemini 3.1 Pro (via Antigravity IDE)
+- AI Model: Gemini 3.1 Pro 
 - Asked to: Generate the frontend architecture, state management patterns, React components, and boilerplate for the Scoped AI Template Editor.
 
 ## Interaction Examples

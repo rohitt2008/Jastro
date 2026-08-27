@@ -11,6 +11,14 @@
 ## State & Resolution
 - Canvas and code editing share the exact same Zustand store (`template`). 
 - Base values are merged dynamically with active viewport overrides at runtime in `TemplateElement.tsx` using `getResolvedStyle`.
+- **Persistence**: The Zustand store uses `persist` middleware to save the `template` and `history` to `localStorage`. A deliberate 'Reset' action is available in the top bar to clear this state.
+
+## Testing
+- Implemented focused automated tests via Vitest testing the core Zustand reducer logic for:
+  - Additive selection logic.
+  - View-specific isolation (overrides do not pollute base).
+  - Canvas-code state consistency (edits create history entries).
+  - Independent element recovery.
 
 ## Deterministic AI & Scope Validation
 - The `AiDemoForm` acts as a static rule engine mapping strings to state patches.
@@ -30,7 +38,6 @@
 - **Cuts**: Removed structural dragging/dropping (reordering) due to time constraints; assumed standard parent-child array edits via code editor suffice for now.
 - **Assumptions**: Desktop scales to `100%` rather than fixed `1440px` to allow fluid browser previewing.
 
-## Next 3 Priorities
+## Next Priorities
 1. **Drag-and-Drop Canvas Reordering**: Let users move elements structurally on the canvas.
 2. **True Marquee Selection**: Implement mouse-drag marquee boxes to select multiple elements intuitively.
-3. **Persist to LocalStorage/DB**: Save the template state across browser refreshes.
