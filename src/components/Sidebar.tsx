@@ -40,9 +40,10 @@ export const Sidebar = () => {
             
             <AiDemoForm />
             
-            <ProposalReview />
           </div>
         )}
+
+        <ProposalReview />
       </div>
     </div>
   );
