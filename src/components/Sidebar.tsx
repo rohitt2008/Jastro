@@ -3,6 +3,7 @@ import { useStore } from '../store/useStore';
 import { PropertyInspector } from './PropertyInspector';
 import { CodeEditor } from './CodeEditor';
 import { AiDemoForm } from './AiDemoForm';
+import { ProposalReview } from './ProposalReview';
 
 export const Sidebar = () => {
   const { selection, template } = useStore();
@@ -39,6 +40,8 @@ export const Sidebar = () => {
             <CodeEditor />
             
             <AiDemoForm />
+            
+            <ProposalReview />
           </div>
         )}
       </div>

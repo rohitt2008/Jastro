@@ -2,6 +2,7 @@ import React from 'react';
 import { Topbar } from './Topbar';
 import { Sidebar } from './Sidebar';
 import { CanvasPreview } from './CanvasPreview';
+import { HistoryPanel } from './HistoryPanel';
 
 export const EditorShell = () => {
   return (
@@ -11,6 +12,7 @@ export const EditorShell = () => {
         <CanvasPreview />
         <Sidebar />
       </div>
+      <HistoryPanel />
     </div>
   );
 };
