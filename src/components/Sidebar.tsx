@@ -1,5 +1,6 @@
 import React from 'react';
 import { useStore } from '../store/useStore';
+import { PropertyInspector } from './PropertyInspector';
 
 export const Sidebar = () => {
   const { selection, template } = useStore();
@@ -28,9 +29,9 @@ export const Sidebar = () => {
               </div>
             </div>
 
-            {/* Properties form will go here */}
             <div className="border-t border-gray-100 pt-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-4">Properties (Coming soon)</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">Properties</h3>
+              <PropertyInspector />
             </div>
             
             {/* AI Demo form will go here */}
