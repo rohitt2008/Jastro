@@ -1,5 +1,5 @@
 import { useStore } from '../store/useStore';
-import { Monitor, Tablet, Smartphone, Undo, Redo, Play, Trash2 } from 'lucide-react';
+import { Monitor, Tablet, Smartphone, Undo, Play, Trash2 } from 'lucide-react';
 import clsx from 'clsx';
 import type { Viewport } from '../types';
 
